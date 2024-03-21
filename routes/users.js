@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const userController = require('../controllers/UserController')
+const userController = require('../controllers/users/UserController')
 
 /*
     - REGISTER
@@ -12,8 +12,8 @@ const userController = require('../controllers/UserController')
 
 router.post('/register', async (req, res, next) => {
     try {
-        const { email, password, name } = req.body;
-        const result = await userController.register(email, password, name);
+        const { email, password, name, phone } = req.body;
+        const result = await userController.register(email, password, name, phone);
         res.status(200).json(result);
     } catch (error) {
         console.log('Register error: ', error.message);
@@ -29,15 +29,15 @@ router.post('/register', async (req, res, next) => {
     - response trả về thông tin nếu thành công, trả về lỗi nếu thất bại
 */
 
-router.post('/login', async (req, res, next) => {
+router.get('/login', async (req, res, next) => {
     try {
-        const { email, password } = req.body;
-        const result = await userController.login(email, password);
-        res.status(200).json(result);
+        const { email, password, phone } = req.body;
+        const result = await userController.login(email, password, phone);
+        res.status(200).json({ status: true, data: result });
 
     } catch (error) {
         console.log('Login error: ', error.message);
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ status: false, message: error.message })
     }
 })
 
@@ -51,12 +51,12 @@ router.post('/login', async (req, res, next) => {
 
 router.put('/update', async (req, res, next) => {
     try {
-        const { email, password, name } = req.body;
-        const result = await userController.update(email, password, name);
+        const { _id, password, name, phone, avatar } = req.body;
+        const result = await userController.update(_id, password, name, phone);
         res.status(200).json(result);
 
     } catch (error) {
-        console.log('Login error: ', error.message);
+        console.log('Update error: ', error.message);
         res.status(500).json({ message: error.message })
     }
 })

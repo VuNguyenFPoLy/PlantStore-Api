@@ -4,10 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
-require('./controllers/UserModel');
+// đăng ký Schema
+require('./controllers/users/UserModel');
+require('./controllers/categories/CategoryModel');
 
 var indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const categoriesRouter = require('./routes/categories');
+const productsRouter = require('./routes/products');
 
 var app = express();
 
@@ -26,6 +30,8 @@ mongoose.connect("mongodb://localhost:27017/Assignment")
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/categories', categoriesRouter);
+app.use('/products', productsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
