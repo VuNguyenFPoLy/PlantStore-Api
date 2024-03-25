@@ -15,10 +15,7 @@ const ProductSchema = new Schema({
     createAt: { type: Date, default: Date.now },
     updateAt: { type: Date, default: Date.now },
     available: { type: Boolean, default: true }
-})
-
-
-
+});
 
 
 module.exports = mongoose.models.product || mongoose.model('product', ProductSchema)

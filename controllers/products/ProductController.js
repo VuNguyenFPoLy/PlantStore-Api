@@ -1,12 +1,13 @@
 const ProductModel = require('./ProductModel');
 const CategoryModel = require('../categories/CategoryModel');
+const { ObjectId } = require('mongodb');
 
 // Get All Products
 const getAllProduct = async () => {
     try {
         const result = await ProductModel.find();
-        if(result) return result;
-        
+        if (result) return result;
+
         return null;
     } catch (error) {
         console.log('Get all product error: ', error.message);
@@ -14,17 +15,31 @@ const getAllProduct = async () => {
     }
 }
 
+// Get Products by number
+const getProductsByNumber = async (number) => {
+    try {
+        const result = await ProductModel.find().limit(number);
+
+        if (result) return result;
+
+        return null;
+    } catch (error) {
+        console.log('Get all product error: ', error.message);
+        throw new Error('Lỗi dữ liệu thất bị');
+    }
+}
+
 // Get by id
 const getProductById = async (id) => {
     try {
-        const result = await ProductModel.findById({ _id: id });
-        if(result) return result;
-        throw new Error('id không tìm thấy');
+      const result = await ProductModel.findById(id);
+      if (result) return result;
+      throw new Error('id không tìm thấy');
     } catch (error) {
-        console.log('Get by id product error: ', error.message);
-        throw new Error('Lấy dữ liệu thất bị');
+      console.log('Get by id product error: ', error.message);
+      throw new Error('Lấy dữ liệu thất bại');
     }
-}
+  }
 
 
 // Add Product
@@ -120,4 +135,7 @@ const deleteProduct = async (id) => {
     }
 }
 
-module.exports = { addProduct, updateProduct, deleteProduct, getAllProduct, getProductById };
+module.exports = {
+    addProduct, updateProduct, deleteProduct,
+    getAllProduct, getProductById, getProductsByNumber
+};

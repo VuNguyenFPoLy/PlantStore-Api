@@ -12,12 +12,11 @@ const userController = require('../controllers/users/UserController')
 
 router.post('/register', async (req, res, next) => {
     try {
-        const { email, password, name, phone } = req.body;
-        const result = await userController.register(email, password, name, phone);
-        res.status(200).json(result);
+        const result = await userController.register(req.body);
+        res.status(200).json({status: true, data: result});
     } catch (error) {
         console.log('Register error: ', error.message);
-        res.status(500).json({ message: error.message })
+        res.status(500).json({status: false, message: error.message })
     }
 });
 
@@ -29,10 +28,9 @@ router.post('/register', async (req, res, next) => {
     - response trả về thông tin nếu thành công, trả về lỗi nếu thất bại
 */
 
-router.get('/login', async (req, res, next) => {
+router.post('/login', async (req, res, next) => {
     try {
-        const { email, password, phone } = req.body;
-        const result = await userController.login(email, password, phone);
+        const result = await userController.login(req.body);
         res.status(200).json({ status: true, data: result });
 
     } catch (error) {
@@ -66,3 +64,4 @@ router.put('/update', async (req, res, next) => {
 
 
 module.exports = router;
+

@@ -1,19 +1,22 @@
 // const { users } = require('../../routes/users');
 const userModel = require('./UserModel')
+const bcryptjs = require('bcryptjs');
+const sendMail = require('../../bin/helper/Mailer')
 
 // Register
-const register = async (email, password, name, phone) => {
+const register = async (data) => {
+    console.log(data)
     try {
+        const { email, password, name, phone } = data;
 
         const REGEX_EMAIL = /^([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)$/;
-        const REGEX_NAME = /^[a-zA-Z ]*$/;
         const REGEX_PHONE = /^[0-9]{10}$/;
         const REGEX_PASSWORD = /^[a-zA-Z0-9_.+-@]{6,}$/;
 
         if (!name || !email || !phone || !password) throw new Error('Thông tin trống');
-        if (!REGEX_NAME.test(fullName)) throw new Error('Tên không đúng');
+        if (name.length < 3) throw new Error('Tên quá ngắn');
         if (!REGEX_EMAIL.test(email)) throw new Error('Email không đúng định dạng');
-        if (!REGEX_PHONE.test(phoneNumber)) throw new Error('Số điện thoại không đúng định dạng');
+        if (!REGEX_PHONE.test(phone)) throw new Error('Số điện thoại không đúng định dạng');
         if (password.length < 6) throw new Error('Mật khẩu quá ngắn');
         if (!REGEX_PASSWORD.test(password)) throw new Error('Mật khẩu không đúng định dạng');
 
@@ -22,14 +25,26 @@ const register = async (email, password, name, phone) => {
         if (user) {
             throw new Error('Email đã tồn tại')
         }
+        
+        const salt = await bcryptjs.genSalt(10);
+        const hashPassword = await bcryptjs.hash(password, salt);
+
 
         // create new user
         user = new userModel({
             email: email,
-            password: password,
+            password: hashPassword,
             name: name,
             phone: phone
         })
+
+        const detailsMail = {
+            name: name,
+            mail: email,
+            subject: 'Success register account'
+        }
+
+        await sendMail(detailsMail);
 
         const result = await user.save();
         console.log(result);
@@ -43,17 +58,18 @@ const register = async (email, password, name, phone) => {
 }
 
 // Login
-const login = async (email, password, phone) => {
+const login = async (data) => {
     try {
-
+        const { email, password, phone } = data;
         let user;
         if (email) user = await userModel.findOne({ email: email });
         if (phone) user = await userModel.findOne({ phone: phone });
 
         if (!user) throw new Error('Email hoặc số điện thoại chưa được đăng ký');
 
+        const checkPass = await bcryptjs.compare(password, user.password);
 
-        if (user.password.toString() === password.toString()) {
+        if (checkPass) {
             const { password: _, ...userData } = user._doc; // Sử dụng destructuring để loại bỏ trường password
             return userData;
         }

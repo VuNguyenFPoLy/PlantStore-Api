@@ -4,9 +4,9 @@ const productController = require('../controllers/products/ProductController');
 
 
 /*
-    - Get product by id
+    - Get all
     - GET
-    - http://localhost:3001/products/65fc1f7c6b4392b40b055b8d
+    - http://localhost:3001/products/
 */
 router.get('/', async (req, res, next) => {
     try {
@@ -32,6 +32,25 @@ router.get('/:id', async (req, res, next) => {
         res.status(200).json({ status: true, data: result });
     } catch (error) {
         console.log('Get product by id error: ', error.message);
+        res.status(500).json({ status: false, message: error.message })
+    }
+});
+
+/*
+    - Get product by number
+    - GET
+    - http://localhost:3001/products/number/6
+    - Response trả về 6 item cho từng role
+*/
+
+router.get('/number/:number', async (req, res, next) => {
+    try {
+        const { number } = req.params;
+        console.log(number);
+        const result = await productController.getProductsByNumber(number);
+        res.status(200).json({ status: true, data: result });
+    } catch (error) {
+        console.log('Get product by number error: ', error.message);
         res.status(500).json({ status: false, message: error.message })
     }
 })
