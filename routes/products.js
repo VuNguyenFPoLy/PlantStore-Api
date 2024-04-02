@@ -18,6 +18,23 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+/**
+    - Get product by name
+    - GET
+    - http://localhost:3001/products/65fc1f7c6b4392b40b055b8d
+
+*/
+
+router.get('/name/:name', async (req, res, next) => {
+    try {
+        const { name } = req.params;
+        const result = await productController.getProductByName(name);
+        res.status(200).json({ status: true, data: result });
+    } catch (error) {
+        console.log('Get product by name error: ', error.message);
+        res.status(500).json({ status: false, message: error.message })
+    }
+})
 
 /*
     - Get product by id

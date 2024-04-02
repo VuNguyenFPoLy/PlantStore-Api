@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const userController = require('../controllers/users/UserController')
 
+
 /*
     - REGISTER
     - POST
@@ -13,10 +14,10 @@ const userController = require('../controllers/users/UserController')
 router.post('/register', async (req, res, next) => {
     try {
         const result = await userController.register(req.body);
-        res.status(200).json({status: true, data: result});
+        res.status(200).json({ status: true, data: result });
     } catch (error) {
         console.log('Register error: ', error.message);
-        res.status(500).json({status: false, message: error.message })
+        res.status(500).json({ status: false, message: error.message })
     }
 });
 
@@ -49,8 +50,7 @@ router.post('/login', async (req, res, next) => {
 
 router.put('/update', async (req, res, next) => {
     try {
-        const { _id, password, name, phone, avatar } = req.body;
-        const result = await userController.update(_id, password, name, phone);
+        const result = await userController.update(req.body);
         res.status(200).json(result);
 
     } catch (error) {

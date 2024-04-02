@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 const CategorySchema = new Schema({
     name: { type: String, required: true },
+    role: { type: Number, required: true },
     createAt: { type: Date, default: Date.now },
     updateAt: { type: Date, default: Date.now },
     available: { type: Boolean, default: true }

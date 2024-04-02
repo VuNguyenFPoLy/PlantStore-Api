@@ -1,13 +1,14 @@
 // const { users } = require('../../routes/users');
 const userModel = require('./UserModel')
 const bcryptjs = require('bcryptjs');
-const sendMail = require('../../bin/helper/Mailer')
+const { sendMail } = require('../helper/Mailer');
+
 
 // Register
 const register = async (data) => {
     console.log(data)
     try {
-        const { email, password, name, phone } = data;
+        const { email, password, name, phone, role } = data;
 
         const REGEX_EMAIL = /^([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)$/;
         const REGEX_PHONE = /^[0-9]{10}$/;
@@ -25,7 +26,7 @@ const register = async (data) => {
         if (user) {
             throw new Error('Email đã tồn tại')
         }
-        
+
         const salt = await bcryptjs.genSalt(10);
         const hashPassword = await bcryptjs.hash(password, salt);
 
@@ -35,19 +36,21 @@ const register = async (data) => {
             email: email,
             password: hashPassword,
             name: name,
-            phone: phone
+            phone: phone,
+            role: role
         })
 
-        const detailsMail = {
-            name: name,
-            mail: email,
-            subject: 'Success register account'
-        }
-
-        await sendMail(detailsMail);
-
         const result = await user.save();
-        console.log(result);
+
+        setTimeout(async () => {
+
+            const data = {
+                email: email,
+                subject: 'Xác thực tài khoản',
+                content: '<h1>Xin chào bạn đến với planta</h1>'
+            }
+            await sendMail(data);
+        }, 0)
 
         return result;
 
@@ -83,16 +86,18 @@ const login = async (data) => {
 }
 
 // Update
-const update = async (_id, password, name, phone, avatar) => {
+const update = async (data) => {
     try {
-
+        const { _id, password, name, phone, avatar, role, cart } = data;
         let user = await userModel.findById(_id);
         if (!user) throw new Error('Email không tồn tại');
 
-        user.password.toString() === password.toString ? null : user.password = password;
-        user.name.toString() === name.toString() ? null : user.name = name;
-        user.phone.toString() === phone.toString() ? null : user.phone = phone;
-        user.avatar === avatar ? null : user.avatar = avatar;
+        user.password = password || user.password;
+        user.name = name || user.name;
+        user.phone = phone || user.phone;
+        user.avatar = avatar || user.avatar;
+        user.role = role || user.role;
+        user.cart = cart || user.cart;
         user.updateAt = Date.now();
 
         const result = await user.save();

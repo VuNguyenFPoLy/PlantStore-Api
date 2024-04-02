@@ -42,8 +42,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
-        const { name } = req.body;
-        const result = await categoryController.addCategory(name);
+        const result = await categoryController.addCategory(req.body);
         res.status(200).json({ status: true, data: result });
     } catch (error) {
         console.log('Add category error: ', error.message);
@@ -79,10 +78,8 @@ router.delete('/delete/:id', async (req, res, next) => {
 
 router.put('/update/:id', async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const { name } = req.body;
         
-        const result = await categoryController.updateCategory(id, name);
+        const result = await categoryController.updateCategory(id, req.body);
         res.status(200).json({ status: true, data: result });
     } catch (error) {
         console.log('Update category error: ', error.message);

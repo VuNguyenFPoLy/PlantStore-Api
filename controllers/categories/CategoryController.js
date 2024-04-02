@@ -4,7 +4,7 @@ const CategoryModel = require('./CategoryModel');
 const getAll = async () => {
     try {
         const result = await CategoryModel.find();
-        if(result) return result;
+        if (result) return result;
         return null;
     } catch (error) {
         console.log('Get all category error: ', error.message);
@@ -16,7 +16,7 @@ const getAll = async () => {
 const getById = async (id) => {
     try {
         const result = await CategoryModel.findOne({ _id: id });
-        if(result) return result;
+        if (result) return result;
         return null;
     } catch (error) {
         console.log('Get by id category error: ', error.message);
@@ -26,10 +26,14 @@ const getById = async (id) => {
 
 
 // Add
-const addCategory = async (name) => {
+const addCategory = async (data) => {
     try {
+
+        const { name, role } = data;
+
         const category = new CategoryModel({
-            name: name
+            name,
+            role
         });
 
         const result = await category.save();
@@ -62,13 +66,17 @@ const deleteCategory = async (id) => {
 }
 
 // update
-const updateCategory = async (id, name) => {
+const updateCategory = async (id, data) => {
     try {
+
+        const { name, role } = data;
 
         const category = await CategoryModel.findOne({ _id: id });
         if (!category) throw new Error('id không tìm thấy');
 
         category.name = name || category.name;
+        category.role = role || category.role;
+
         category.updateAt = Date.now();
 
         const result = category.save();
