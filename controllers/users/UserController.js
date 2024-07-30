@@ -3,10 +3,21 @@ const userModel = require('./UserModel')
 const bcryptjs = require('bcryptjs');
 const { sendMail } = require('../helper/Mailer');
 
+// get users
+const getUsers = async () => {
+    try {
+        const result = await userModel.find();
+        if (result) return result;
+
+        return null;
+    } catch (error) {
+        console.log('Get users error: ', error.message);
+        throw new Error('Lấy dữ liệu thất bại');
+    }
+}
 
 // Register
 const register = async (data) => {
-    console.log(data)
     try {
         const { email, password, name, phone, role } = data;
 
@@ -87,17 +98,25 @@ const login = async (data) => {
 
 // Update
 const update = async (data) => {
+    console.log(data)
     try {
-        const { _id, password, name, phone, avatar, role, cart } = data;
+        const { _id, password, name, phone, avatar, role, cart, address } = data;
         let user = await userModel.findById(_id);
         if (!user) throw new Error('Email không tồn tại');
 
-        user.password = password || user.password;
+        const salt = await bcryptjs.genSalt(10);
+        let hashPassword;
+        if (password) {
+            hashPassword = await bcryptjs.hash(password, salt);
+        }
+
+        user.password = hashPassword || user.password;
         user.name = name || user.name;
         user.phone = phone || user.phone;
         user.avatar = avatar || user.avatar;
         user.role = role || user.role;
         user.cart = cart || user.cart;
+        user.address = address || user.address;
         user.updateAt = Date.now();
 
         const result = await user.save();
@@ -109,4 +128,4 @@ const update = async (data) => {
     }
 }
 
-module.exports = { register, login, update };
+module.exports = { register, login, update, getUsers };

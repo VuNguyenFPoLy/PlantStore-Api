@@ -14,6 +14,18 @@ const createNotification = async (data) => {
     }
 }
 
+// get notifications by is user
+const getNotification = async (idUser) => {
+    try {
+        const result = await NotificationModel.find({ idUser: idUser });
+        if (result) return result;
+        return null;
+    } catch (error) {
+        console.log('Get notification error: ', error.message);
+        return null;
+    }
+}
+
 // get all notification
 const getAllNotification = async () => {
     try {
@@ -54,5 +66,6 @@ module.exports = {
     createNotification,
     getAllNotification,
     deleteNotification,
-    updateNotification
+    updateNotification,
+    getNotification
 }

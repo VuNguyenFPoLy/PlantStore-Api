@@ -2,6 +2,21 @@ var express = require('express');
 var router = express.Router();
 const userController = require('../controllers/users/UserController')
 
+/**
+ * Get all
+ * GET
+ * http://localhost:3001/users
+ */
+router.get('/', async (req, res, next) => {
+    try {
+        const result = await userController.getUsers();
+        res.status(200).json({ status: true, data: result });
+    } catch (error) {
+        console.log('Get all users error: ', error.message);
+        res.status(500).json({ status: false, message: error.message })
+    }
+})
+
 
 /*
     - REGISTER
@@ -51,11 +66,11 @@ router.post('/login', async (req, res, next) => {
 router.put('/update', async (req, res, next) => {
     try {
         const result = await userController.update(req.body);
-        res.status(200).json(result);
+        res.status(200).json({ status: true, data: result });
 
     } catch (error) {
         console.log('Update error: ', error.message);
-        res.status(500).json({ message: error.message })
+        res.status(500).json({ status: false, message: error.message })
     }
 })
 

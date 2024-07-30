@@ -54,23 +54,23 @@ router.get('/:id', async (req, res, next) => {
 });
 
 /*
-    - Get product by number
+    - Get product by page
     - GET
-    - http://localhost:3001/products/number/6
-    - Response trả về 6 item cho từng role
+    - http://localhost:3001/products/page/1
+    - show 10 products per page
 */
-
-router.get('/number/:number', async (req, res, next) => {
+router.get('/page/:page', async (req, res, next) => {
     try {
-        const { number } = req.params;
-        console.log(number);
-        const result = await productController.getProductsByNumber(number);
+        const { page } = req.params;
+        const result = await productController.getProductsByPage(page);
         res.status(200).json({ status: true, data: result });
     } catch (error) {
-        console.log('Get product by number error: ', error.message);
+        console.log('Get product by page error: ', error.message);
         res.status(500).json({ status: false, message: error.message })
     }
 })
+
+router.get
 
 
 /*

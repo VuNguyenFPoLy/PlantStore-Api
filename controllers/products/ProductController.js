@@ -15,27 +15,30 @@ const getAllProduct = async () => {
     }
 }
 
-// Get Products by number
-const getProductsByNumber = async (number) => {
-    try {
-        const result = await ProductModel.find().limit(number);
 
-        if (result) return result;
+// Get Products by Page
+const getProductsByPage = async (page, limit = 10) => {
+    try {
+        const skip = (page - 1) * limit;
+        const result = await ProductModel.find()
+            .skip(skip)
+            .limit(limit);
+        if (result) return result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
         return null;
     } catch (error) {
-        console.log('Get all product error: ', error.message);
-        throw new Error('Lỗi dữ liệu thất bị');
+        console.log('Get products by page error: ', error.message);
+        throw new Error('Lỗi lấy dữ liệu theo trang');
     }
 }
 
 // Get by name
 const getProductByName = async (name) => {
     try {
-        if(name){
+        if (name) {
             const allProduct = await ProductModel.find();
             const product = allProduct.filter(item => item.name.toLocaleLowerCase().includes(name.toLocaleLowerCase()))
-            if(product) return product;
+            if (product) return product;
             return null;
         }
     } catch (error) {
@@ -47,18 +50,19 @@ const getProductByName = async (name) => {
 // Get by id
 const getProductById = async (id) => {
     try {
-      const result = await ProductModel.findById(id);
-      if (result) return result;
-      throw new Error('id không tìm thấy');
+        const result = await ProductModel.findById(id);
+        if (result) return result;
+        throw new Error('id không tìm thấy');
     } catch (error) {
-      console.log('Get by id product error: ', error.message);
-      throw new Error('Lấy dữ liệu thất bại');
+        console.log('Get by id product error: ', error.message);
+        throw new Error('Lấy dữ liệu thất bại');
     }
-  }
+}
 
 
 // Add Product
 const addProduct = async (data) => {
+    console.log(data)
     try {
         const { name, categories, type, price, size, brand, quantity, description, image, role } = data;
 
@@ -95,6 +99,8 @@ const addProduct = async (data) => {
 
 // Update Product
 const updateProduct = async (id, data) => {
+    console.log('id: ', id, ' data: ', data)
+
     try {
         const product = await ProductModel.findById(id);
 
@@ -152,5 +158,5 @@ const deleteProduct = async (id) => {
 
 module.exports = {
     addProduct, updateProduct, deleteProduct,
-    getAllProduct, getProductById, getProductsByNumber, getProductByName
+    getAllProduct, getProductById, getProductsByPage, getProductByName
 };

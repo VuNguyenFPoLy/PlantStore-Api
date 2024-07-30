@@ -71,7 +71,7 @@ const updateCart = async (id, data) => {
 };
 
 // delete all
-const deleteAllCarts = async (idUser) => {
+const deleteAllCarts = async (idUser) => { 
     try {
         const result = await CartModel.deleteMany({ idUser: idUser });
         if (result) return result;

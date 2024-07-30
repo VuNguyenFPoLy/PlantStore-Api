@@ -17,6 +17,7 @@ const searchHistoriesRouter = require('./routes/searchhistories');
 const questionRouter = require('./routes/questions');
 const cartRouter = require('./routes/carts');
 const notificationRouter = require('./routes/notifications');
+const transactionRouter = require('./routes/transactions');
 
 var app = express();
 
@@ -42,6 +43,7 @@ app.use('/searchhistories', searchHistoriesRouter);
 app.use('/questions', questionRouter);
 app.use('/carts', cartRouter);
 app.use('/notifications', notificationRouter);
+app.use('/transactions', transactionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
